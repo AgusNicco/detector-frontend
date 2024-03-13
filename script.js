@@ -1,5 +1,21 @@
-var url = 'http://127.0.0.1:5000/predict';
+// var url = 'http://127.0.0.1:5000/predict';
 var url = 'https://detector-api.azurewebsites.net/predict';
+var pingUrl = 'https://detector-api.azurewebsites.net/status';
+
+function pingServer() {
+    fetch(pingUrl, {
+        method: 'GET'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+pingServer();
 
 document.getElementById('predictButton').addEventListener('click', function () {
     const textInput = document.getElementById('textInput').value;
@@ -30,11 +46,12 @@ document.getElementById('predictButton').addEventListener('click', function () {
                     message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
                     message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
                     message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
+                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std}</p>`;
                     message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
                     if (data.features.length < 300) {
                         message.innerHTML += `<p>Warning: Length of the text is less than 300 words, which means lower accuracy</p>`;
                     }
-                } else if (data.prediction == 0.5) {
+                } else if (data.prediction >= 0.5 && data.prediction < 0.7) {
                     message.innerHTML = "<p>Our model is uncertain about this text. Consider adding more words if possible.</p>";
                     message.innerHTML += `<p>The following are the prevalences factor for 1-4 word sequences. Positive means AI, negative means human. </p>`;
                     message.innerHTML += `<p>Single word prevalence: ${(data.features.prevalence).toFixed(2)}</p>`;
@@ -42,10 +59,20 @@ document.getElementById('predictButton').addEventListener('click', function () {
                     message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
                     message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
                     message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
+                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std} (lower means AI) </p>`;
                     message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
                 }
                 else {
                     message.innerHTML = "<p>AI Not Detected</p>";
+                    message.innerHTML += `<p>The following are the prevalences factor for 1-4 word sequences. Positive means AI, negative means human. </p>`;
+                    message.innerHTML += `<p>Single word prevalence: ${(data.features.prevalence).toFixed(2)}</p>`;
+                    message.innerHTML += `<p>Bigram prevalence: ${data.features.bigram_prevalence.toFixed(2)}</p>`;
+                    message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
+                    message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
+                    message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
+                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std} (lower means AI) </p>`;
+                    message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
+
                 }
                 resultElement.appendChild(message);
             } else {
