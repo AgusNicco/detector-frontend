@@ -1,6 +1,6 @@
+var url = 'http://127.0.0.1:5000/predict';
 var url = 'https://detector-api.azurewebsites.net/predict';
 var pingUrl = 'https://detector-api.azurewebsites.net/status';
-var url = 'http://127.0.0.1:5000/predict';
 
 function pingServer() {
     fetch(pingUrl, {
