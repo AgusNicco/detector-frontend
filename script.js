@@ -1,6 +1,6 @@
-// var url = 'http://127.0.0.1:5000/predict';
 var url = 'https://detector-api.azurewebsites.net/predict';
 var pingUrl = 'https://detector-api.azurewebsites.net/status';
+var url = 'http://127.0.0.1:5000/predict';
 
 function pingServer() {
     fetch(pingUrl, {
@@ -17,8 +17,16 @@ function pingServer() {
 
 pingServer();
 
+
+
 document.getElementById('predictButton').addEventListener('click', function () {
+    var loadingElement = document.createElement('div');
+    loadingElement.innerHTML = '<div> <h3 id="features-heading">Scanning<h3> <div class="loader"></div> </div>';
     const textInput = document.getElementById('textInput').value;
+    const resultElement = document.getElementById('features');
+    resultElement.innerHTML = '';
+    resultElement.appendChild(loadingElement);
+
     fetch(url, {
         method: 'POST',
         headers: {
@@ -28,60 +36,60 @@ document.getElementById('predictButton').addEventListener('click', function () {
     })
         .then(response => response.json())
         .then(data => {
-            const resultElement = document.getElementById('result');
+            // const resultElement = document.getElementById('result');
 
             resultElement.innerHTML = '';
+
+
             if (data.prediction !== undefined) {
-                const prediction = data.prediction > 0.5 ? 'AI Detected' : 'AI Not Detected';
+                const prediction = data.prediction > 0.75 ? 'AI Detected' : data.prediction > 0.5 ? 'Uncertain' : 'AI Not Detected';
 
 
-                resultElement.innerHTML += `<p>AI Probability: ${data.prediction * 100}%</p>`;
+                const probability = (data.prediction * 100).toFixed(2);
+                const prevalenceFactor = (data.features.prevalence + data.features.bigram_prevalence + data.features.trigram_prevalence + data.features.fourgram_prevalence).toFixed(2);
+                const sentenceVariance = data.features.sentence_std.toFixed(2);
+                const paragraphVariance = data.features.paragraph_std.toFixed(2);
+                const confidenceLevel = data.features.confidence_level;
+                const false_positive_rate = data.features.false_positive_rate;
+                const length = data.features.length.toFixed(2);
+                const message = data.features.message;
 
-                let message = document.createElement('div');
-                if (data.prediction > 0.5) {
-                    // message.innerHTML += '<p>Verdict: AI Detected</p>';
-                    message.innerHTML += `<p>The following are the prevalence factors for 1-4 word sequences. Positive means AI, negative means human. </p>`;
-                    message.innerHTML += `<p>Single word prevalence: ${(data.features.prevalence).toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Bigram prevalence: ${data.features.bigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
-                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std}</p>`;
-                    message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
-                    if (data.features.length < 300) {
-                        message.innerHTML += `<p>Warning: Length of the text is less than 300 words, which means lower accuracy</p>`;
-                    }
-                } else if (data.prediction >= 0.5 && data.prediction < 0.7) {
-                    message.innerHTML = "<p>Our model is uncertain about this text. Consider adding more words if possible.</p>";
-                    message.innerHTML += `<p>The following are the prevalences factor for 1-4 word sequences. Positive means AI, negative means human. </p>`;
-                    message.innerHTML += `<p>Single word prevalence: ${(data.features.prevalence).toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Bigram prevalence: ${data.features.bigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
-                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std} (lower means AI) </p>`;
-                    message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
+                if (data.prediction > 0.75) {
+                    resultElement.innerHTML += `
+                    <div id="output-container">
+                        <div id= "features-heading">${prediction}</div>
+                        <div id="output-features-container">
+                            <div class="feature-element">AI Probability: ${probability}%</div>
+                            <div class="feature-element">Confidence Level: ${confidenceLevel}</div>
+                            <div class="feature-element">False Positive Rate: ${false_positive_rate}%</div>
+                            <div class="feature-element">Prevalence Factor: ${prevalenceFactor}</div>
+                            <div class="feature-element">Sentence Variance: ${sentenceVariance}</div>
+                            <div class="feature-element">Paragraph Variance: ${paragraphVariance}</div>
+                            <div class="feature-element">Length: ${length}</div>
+                        </div>
+                        <div class="output-message">${message}</div>
+                    </div>`;
                 }
                 else {
-                    message.innerHTML = "<p>AI Not Detected</p>";
-                    message.innerHTML += `<p>The following are the prevalences factor for 1-4 word sequences. Positive means AI, negative means human. </p>`;
-                    message.innerHTML += `<p>Single word prevalence: ${(data.features.prevalence).toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Bigram prevalence: ${data.features.bigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Trigram prevalence: ${data.features.trigram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Fourgram prevalence: ${data.features.fourgram_prevalence.toFixed(2)}</p>`;
-                    message.innerHTML += `<p>Variance of sentence length: ${data.features.sentence_std.toFixed(2)} (lower means AI)</p>`;
-                    message.innerHTML += `<p>Variance of paragraph length: ${data.features.paragraph_std} (lower means AI) </p>`;
-                    message.innerHTML += `<p>Length in words: ${data.features.length}</p>`;
-
+                    resultElement.innerHTML += `
+                    <div id="output-container">
+                        <div id= "features-heading">${prediction}</div>
+                        <div id="output-features-container">
+                            <div class="feature-element">AI Probability: ${probability}%</div>
+                            <div class="feature-element">Prevalence Factor: ${prevalenceFactor}</div>
+                            <div class="feature-element">Sentence Variance: ${sentenceVariance}</div>
+                            <div class="feature-element">Paragraph Variance: ${paragraphVariance}</div>
+                            <div class="feature-element">Length: ${length}</div>
+                        </div>
+                        <div class="output-message">${message}</div>
+                    </div>`;
                 }
-                resultElement.appendChild(message);
             } else {
                 resultElement.innerHTML = '<p>Error: Could not get a prediction.</p>';
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            document.getElementById('result').textContent = 'Error: Could not connect to the API.';
         });
 });
 

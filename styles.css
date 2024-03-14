@@ -1,31 +1,161 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: sans-serif, Arial, sans-serif;
     text-align: center;
-    padding: 50px;
+
+
+    /* background: linear-gradient(to right, #2439ac 0%, #3f5cc5 100%); */
+    /* background: linear-gradient(to right, #240027 0%, #000000 100%); */
+    background: linear-gradient(to right, #201658 0%, #000000 100%);
+    
 }
 
 .container {
+    margin-top: 5em;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+}
+
+h1 {
+    font-size: 60px;
+    background: linear-gradient(to right, #ff4a18 50%, #e3dbd6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; /* Make the text transparent to show the gradient */
+    -webkit-text-fill-color: transparent; /* For WebKit browsers */
+    margin-top: 3em;
+}
+
+
+#quote {
+    font-size: 20px;
+    background: linear-gradient(to right, #f0ecec 50%, #e1d9d9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent; 
+    font-style: italic;
     width: 80%;
     margin: auto;
+    margin-bottom: 2em;
+}
+
+#detector-container {
+    justify-content: space-around;
+    display: flex;
+}
+
+#features {
+    min-width: 380px;
+    max-width: 500px;
+    display: inline-block;
+    font-size: 20px;
+    margin-bottom: 2em;
+    margin-left: 2em;
+    margin-right: auto;
+    color: rgb(61, 59, 59);
+    background-color: rgb(229, 229, 229);
+    border-radius: 10px;
+    border-color: black;
+    text-align: left;
+}
+
+.feature-element {
+    font-size: 18px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: left;
+    display: block;
+    margin-bottom: 0.2em;
+}
+
+#output-container {
+    margin-right: auto;
+    display: block;
+    justify-content: center;
+    text-align: center;
+    margin-left: auto;
+}
+
+#output-features-container {
+    margin-left: 80px;
+    margin-bottom: 0.4em;
+}
+
+#features li {
+    margin-bottom: 1em;
+    font-size: 17px;
+}
+
+#features-heading {
+    font-size: 30px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 textarea {
+    display: inline-block;
+    margin-left: auto;
     width: 100%;
     height: 150px;
+    margin-bottom: 2em;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: black;
+    background-color: rgb(229, 229, 229);
+    max-width: 900px;
+    
+}
+
+#textInput {
+    font-size: 20px;
+    margin-bottom: 2em;
+    height: 15em;
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: #ff4a18;
+    border-color: black;
     color: white;
     padding: 15px 32px;
     text-align: center;
-    display: inline-block;
-    font-size: 16px;
-    margin: 20px 0;
+    font-size: 30px;
+    border-radius: 20px;
     cursor: pointer;
+    margin: auto;
+    display: block;
 }
 
 #result {
     font-size: 20px;
     margin-top: 20px;
 }
+
+.output-message {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
+    margin-left: 1em;
+    
+
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #241e1e; /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
